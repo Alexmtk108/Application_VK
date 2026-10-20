@@ -3,6 +3,7 @@ package com.mukhtarov.application_vk.ui
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,7 +37,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mukhtarov.application_vk.R
-import com.mukhtarov.application_vk.model.AppCategory
 import com.mukhtarov.application_vk.model.AppItem
 import com.mukhtarov.application_vk.model.MockAppsData
 
@@ -46,6 +46,7 @@ import com.mukhtarov.application_vk.model.MockAppsData
  */
 @Composable
 fun AppListScreen(
+    onAppClick: (Int) -> Unit = {},
     apps: List<AppItem> = MockAppsData.appsList,
     modifier: Modifier = Modifier
 ) {
@@ -56,6 +57,7 @@ fun AppListScreen(
         }
     ) { innerPadding ->
         AppList(
+            onAppClick = onAppClick,
             apps = apps,
             modifier = Modifier
                 .fillMaxSize()
@@ -122,6 +124,7 @@ fun AppListToolbar(
  */
 @Composable
 fun AppList(
+    onAppClick: (Int) -> Unit = {},
     apps: List<AppItem>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 8.dp)
@@ -137,6 +140,7 @@ fun AppList(
             AppListItem(
                 app = app,
                 modifier = Modifier.fillMaxWidth()
+                    .clickable { onAppClick(app.id) }
             )
             HorizontalDivider(
                 modifier = Modifier.padding(start = 88.dp, end = 16.dp),
@@ -223,10 +227,6 @@ fun AppListItem(
         }
     }
 }
-
-// ============================================================================
-// Previews для быстрой проверки в Android Studio
-// ============================================================================
 
 @Preview(name = "Light Mode", showBackground = true, showSystemUi = true)
 @Preview(
