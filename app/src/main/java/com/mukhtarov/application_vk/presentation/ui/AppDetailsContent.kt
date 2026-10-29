@@ -1,0 +1,263 @@
+package com.mukhtarov.application_vk.presentation.ui
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import com.mukhtarov.application_vk.domain.model.AppDetails
+import com.mukhtarov.application_vk.domain.model.AppDetailsState
+import com.mukhtarov.application_vk.domain.model.AppItem
+import com.mukhtarov.application_vk.domain.model.Category
+import com.mukhtarov.application_vk.domain.model.SimilarApp
+import com.mukhtarov.application_vk.presentation.ui.theme.Application_VKTheme
+
+@Composable
+fun AppDetailsContent(
+    content: AppDetailsState.Content,
+    showcaseApps: List<AppItem>,
+    onBackClick: () -> Unit,
+    onShareClick: () -> Unit,
+    onInstallClick: () -> Unit,
+    onReadMoreClick: () -> Unit,
+    onDeveloperClick: () -> Unit,
+    onSimilarAppDownloadClick: (SimilarApp) -> Unit,
+    onShowcaseAppClick: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val appDetails = content.appDetails
+    val descriptionCollapsed = content.descriptionCollapsed
+
+    Column(modifier.verticalScroll(rememberScrollState())) {
+        Toolbar(
+            onBackClick = onBackClick,
+            onShareClick = onShareClick,
+        )
+        Spacer(Modifier.height(8.dp))
+        AppDetailsHeader(
+            appDetails = appDetails,
+            modifier = Modifier.padding(horizontal = 16.dp),
+        )
+        Spacer(Modifier.height(16.dp))
+        InstallButton(
+            onClick = onInstallClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        )
+        if (content.similarApps.isNotEmpty()) {
+            Spacer(Modifier.height(12.dp))
+            SimilarApps(
+                apps = content.similarApps,
+                onDownloadClick = onSimilarAppDownloadClick,
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
+        }
+        Spacer(Modifier.height(12.dp))
+        ScreenshotsList(
+            screenshotUrlList = listOf("1", "2", "3"),
+            contentPadding = PaddingValues(horizontal = 16.dp),
+        )
+        Spacer(Modifier.height(12.dp))
+        AppDescription(
+            description = appDetails.description,
+            collapsed = descriptionCollapsed,
+            onReadMoreClick = onReadMoreClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+        )
+        Spacer(Modifier.height(12.dp))
+        HorizontalDivider(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            color = MaterialTheme.colorScheme.outlineVariant,
+        )
+        Spacer(Modifier.height(12.dp))
+        Developer(
+            name = appDetails.developer,
+            onClick = onDeveloperClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp),
+        )
+        Spacer(Modifier.height(24.dp))
+        ShowcaseBlock(
+            apps = showcaseApps,
+            onShowcaseAppClick = onShowcaseAppClick,
+            modifier = Modifier.padding(bottom = 24.dp)
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun Preview() {
+    Application_VKTheme {
+        AppDetailsContent(
+            content = AppDetailsState.Content(
+                appDetails = AppDetails(
+                    id = "fa2e31b8-1234-4cf7-9914-108a170a1b01",
+                    name = "Гильдия Героев: Экшен ММО РПГ",
+                    developer = "VK Play",
+                    category = Category.GAME,
+                    ageRating = 12,
+                    size = 223.7f,
+                    screenshotUrlList = listOf(
+                        "https://static.rustore.ru/imgproxy/-y8kd-4B6MQ-1OKbAbnoAIMZAzvoMMG9dSiHMpFaTBc/preset:web_scr_lnd_335/plain/https://static.rustore.ru/apk/393868735/content/SCREENSHOT/dfd33017-e90d-4990-aa8c-6f159d546788.jpg@webp",
+                        "https://static.rustore.ru/imgproxy/dZCvNtRKKFpzOmGlTxLszUPmwi661IhXynYZGsJQvLw/preset:web_scr_lnd_335/plain/https://static.rustore.ru/apk/393868735/content/SCREENSHOT/60ec4cbc-dcf6-4e69-aa6f-cc2da7de1af6.jpg@webp",
+                        "https://static.rustore.ru/imgproxy/g5whSI1uNqaL2TUO7TFfM8M63vXpWXNCm2vlX4Ahvc4/preset:web_scr_lnd_335/plain/https://static.rustore.ru/apk/393868735/content/SCREENSHOT/c2dde8bc-c4ab-482a-80a5-2789149f598d.jpg@webp",
+                        "https://static.rustore.ru/imgproxy/TjeurtC7BczOVJt74XhjGYuQnG1l4rx6zpDqyMb00GY/preset:web_scr_lnd_335/plain/https://static.rustore.ru/apk/393868735/content/SCREENSHOT/08318f76-7a9c-43aa-b4a7-1aa878d00861.jpg@webp",
+                    ),
+                    iconUrl = "https://static.rustore.ru/imgproxy/APsbtHxkVa4MZ0DXjnIkSwFQ_KVIcqHK9o3gHY6pvOQ/preset:web_app_icon_62/plain/https://static.rustore.ru/apk/393868735/content/ICON/3f605e3e-f5b3-434c-af4d-77bc5f38820e.png@webp",
+                    description = "Легендарный рейд героев в Фэнтези РПГ. Станьте героем гильдии и зразите мастера подземелья!"
+                ),
+                similarApps = List(15) { index ->
+                    SimilarApp(
+                        id = "similar-app-$index",
+                        name = "Гильдия Героев: Экшен ММО РПГ: $index",
+                        iconUrl = "https://static.rustore.ru/imgproxy/APsbtHxkVa4MZ0DXjnIkSwFQ_KVIcqHK9o3gHY6pvOQ/preset:web_app_icon_62/plain/https://static.rustore.ru/apk/393868735/content/ICON/3f605e3e-f5b3-434c-af4d-77bc5f38820e.png@webp",
+                    )
+                },
+                descriptionCollapsed = false,
+            ),
+            showcaseApps = emptyList(),
+            onReadMoreClick = {},
+            onBackClick = {},
+            onShareClick = {},
+            onInstallClick = {},
+            onDeveloperClick = {},
+            onSimilarAppDownloadClick = {},
+            onShowcaseAppClick = {},
+            modifier = Modifier.fillMaxSize(),
+        )
+    }
+}
+
+@Composable
+fun ScreenshotsList(screenshotUrlList: List<String>, contentPadding: PaddingValues) {
+    // Горизонтальный список для скриншотов
+    LazyRow(
+        contentPadding = contentPadding,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(screenshotUrlList) { url ->
+            AsyncImage(
+                model = url,
+                contentDescription = "Скриншот приложения",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .height(200.dp)
+                    .width(300.dp) // ЗАМЕНИ fillMaxWidth на width(300.dp)
+                    .clip(RoundedCornerShape(12.dp))
+            )
+        }
+    }
+}
+
+@Composable
+fun AppDetailsHeader(appDetails: AppDetails, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Загружаем иконку по URL
+        AsyncImage(
+            model = appDetails.iconUrl,
+            contentDescription = "Иконка приложения",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(64.dp) // Размер иконки
+                .clip(RoundedCornerShape(16.dp))
+        )
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        // Название и разработчик
+        Column {
+            Text(
+                text = appDetails.name,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = appDetails.developer,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+//ЗАГЛУШКИ ДЛЯ КОМПОНЕНТОВ
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Toolbar(onBackClick: () -> Unit, onShareClick: () -> Unit) {
+    TopAppBar(
+        title = { Text("Детали приложения") },
+        navigationIcon = {
+            IconButton(onClick = onBackClick) {
+                Text("<-") // Замените на иконку стрелки
+            }
+        }
+    )
+}
+
+@Composable
+fun InstallButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    Button(onClick = onClick, modifier = modifier) {
+        Text("Установить")
+    }
+}
+
+@Composable
+fun SimilarApps(
+    apps: List<SimilarApp>,
+    onDownloadClick: (SimilarApp) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Text("Похожие приложения (заглушка)", modifier = modifier)
+}
+
+@Composable
+fun AppDescription(
+    description: String,
+    collapsed: Boolean,
+    onReadMoreClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Text(description, modifier = modifier)
+}
+
+@Composable
+fun Developer(name: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    Text("Разработчик: $name", modifier = modifier)
+}
