@@ -23,9 +23,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,32 +42,70 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mukhtarov.application_vk.R
 import com.mukhtarov.application_vk.model.AppItem
 import com.mukhtarov.application_vk.model.MockAppsData
+import com.mukhtarov.application_vk.ui.viewmodel.AppListViewModel
 
 /**
  * Основной экран со списком приложений.
  * Компоновка сверху вниз: Тулбар -> Список приложений.
  */
+
+/**
+ * Stateful-обертка, которая связывает ViewModel с UI.
+ */
+@Composable
+fun AppListRoute(
+    onAppClick: (Int) -> Unit,
+    viewModel: AppListViewModel = viewModel()
+) {
+    // Подписываемся на состояние списка
+    val uiState by viewModel.uiState.collectAsState()
+
+    // Состояние для управления Snackbar
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // Слушаем одноразовые события (Snackbar).
+    // LaunchedEffect не перезапускается при повороте экрана, канал отдает ивент 1 раз.
+    LaunchedEffect(Unit) {
+        viewModel.uiEvent.collect { message ->
+            snackbarHostState.currentSnackbarData?.dismiss()
+            snackbarHostState.showSnackbar(message = message)
+        }
+    }
+
+    AppListScreen(
+        apps = uiState.apps,
+        snackbarHostState = snackbarHostState,
+        onAppClick = onAppClick,
+        onToolbarClick = { viewModel.onToolbarClicked() }
+    )
+}
+
+/**
+ * Stateless-экран (только верстка, никаких данных и логики).
+ */
 @Composable
 fun AppListScreen(
-    onAppClick: (Int) -> Unit = {},
-    apps: List<AppItem> = MockAppsData.appsList,
+    apps: List<AppItem>,
+    snackbarHostState: SnackbarHostState,
+    onAppClick: (Int) -> Unit,
+    onToolbarClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier,
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
-            AppListToolbar()
+            AppListToolbar(onToolbarClick = onToolbarClick)
         }
     ) { innerPadding ->
         AppList(
-            onAppClick = onAppClick,
             apps = apps,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
+            onAppClick = onAppClick
         )
     }
 }
@@ -72,11 +116,14 @@ fun AppListScreen(
  */
 @Composable
 fun AppListToolbar(
+    onToolbarClick: () -> Unit,
     modifier: Modifier = Modifier,
-    accentColor: Color = Color(0xFF0077FF) // Акцентный цвет
+    accentColor: Color = Color(0xFF0077FF)
 ) {
     Surface(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onToolbarClick() },
         color = accentColor,
         shadowElevation = 4.dp
     ) {
@@ -124,8 +171,8 @@ fun AppListToolbar(
  */
 @Composable
 fun AppList(
-    onAppClick: (Int) -> Unit = {},
     apps: List<AppItem>,
+    onAppClick: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 8.dp)
 ) {
@@ -139,8 +186,8 @@ fun AppList(
         ) { app ->
             AppListItem(
                 app = app,
+                onAppClick = onAppClick, // 2. Передаем клик дальше, в саму карточку
                 modifier = Modifier.fillMaxWidth()
-                    .clickable { onAppClick(app.id) }
             )
             HorizontalDivider(
                 modifier = Modifier.padding(start = 88.dp, end = 16.dp),
@@ -158,10 +205,12 @@ fun AppList(
 @Composable
 fun AppListItem(
     app: AppItem,
+    onAppClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
+            .clickable { onAppClick(app.id) }
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -238,7 +287,11 @@ fun AppListItem(
 @Composable
 private fun AppListScreenPreview() {
     MaterialTheme {
-        AppListScreen()
+        AppListScreen(
+            apps = MockAppsData.appsList, // Передаем фейковые данные для отрисовки
+            snackbarHostState = remember { SnackbarHostState() }, // Пустой стейт
+            onAppClick = {},
+            onToolbarClick = {})
     }
 }
 
@@ -247,7 +300,8 @@ private fun AppListScreenPreview() {
 private fun AppListItemPreview() {
     MaterialTheme {
         AppListItem(
-            app = MockAppsData.appsList.first()
+            app = MockAppsData.appsList.first(),
+            onAppClick = {}
         )
     }
 }

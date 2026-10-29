@@ -52,9 +52,8 @@ fun ShowcaseBlock(
                 appsOnPage.forEach { app ->
                     AppListItem(
                         app = app,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onShowcaseAppClick(app.id) }
+                        onAppClick = onShowcaseAppClick, // Передаем обработчик витрины напрямую
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
             }

@@ -17,11 +17,9 @@ fun AppNavigation() {
 
     NavHost(navController = navController, startDestination = "app_list") {
 
-        // 1. ЭКРАН СПИСКА (ИЗ ЧАСТИ 1)
         composable("app_list") {
-            AppListScreen(
+            AppListRoute(
                 onAppClick = { clickedAppId ->
-                    // Переходим на экран деталей, передавая ID
                     navController.navigate("app_detail/$clickedAppId")
                 }
             )

@@ -229,12 +229,21 @@ fun InstallButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun SimilarApps(apps: List<com.mukhtarov.application_vk.model.SimilarApp>, onDownloadClick: (com.mukhtarov.application_vk.model.SimilarApp) -> Unit, modifier: Modifier = Modifier) {
+fun SimilarApps(
+    apps: List<com.mukhtarov.application_vk.model.SimilarApp>,
+    onDownloadClick: (com.mukhtarov.application_vk.model.SimilarApp) -> Unit,
+    modifier: Modifier = Modifier
+) {
     androidx.compose.material3.Text("Похожие приложения (заглушка)", modifier = modifier)
 }
 
 @Composable
-fun AppDescription(description: String, collapsed: Boolean, onReadMoreClick: () -> Unit, modifier: Modifier = Modifier) {
+fun AppDescription(
+    description: String,
+    collapsed: Boolean,
+    onReadMoreClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     androidx.compose.material3.Text(description, modifier = modifier)
 }
 
