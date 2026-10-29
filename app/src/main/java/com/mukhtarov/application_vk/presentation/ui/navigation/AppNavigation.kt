@@ -6,10 +6,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.mukhtarov.application_vk.model.AppDetails
-import com.mukhtarov.application_vk.model.AppDetailsState
-import com.mukhtarov.application_vk.model.Category
-import com.mukhtarov.application_vk.model.MockAppsData
+import com.mukhtarov.application_vk.data.repository.AppRepositoryImpl
+import com.mukhtarov.application_vk.data.source.MockAppsDataSource
+import com.mukhtarov.application_vk.domain.model.AppDetails
+import com.mukhtarov.application_vk.domain.model.AppDetailsState
+import com.mukhtarov.application_vk.domain.model.Category
+import com.mukhtarov.application_vk.presentation.ui.AppDetailsContent
+import com.mukhtarov.application_vk.presentation.ui.AppListRoute
 
 @Composable
 fun AppNavigation() {
@@ -31,8 +34,10 @@ fun AppNavigation() {
             arguments = listOf(navArgument("appId") { type = NavType.IntType })
         ) { backStackEntry ->
             val appId = backStackEntry.arguments?.getInt("appId") ?: return@composable
+            val repository = AppRepositoryImpl()
 
-            val app = MockAppsData.appsList.find { it.id == appId }
+            val app = repository.getAppById(appId)
+            val allApps = repository.getApps()
 
             if (app != null) {
                 val mockContent = AppDetailsState.Content(
@@ -53,6 +58,7 @@ fun AppNavigation() {
 
                 AppDetailsContent(
                     content = mockContent,
+                    showcaseApps = allApps, // ИСПРАВЛЕНО: передаем данные для витрины из репозитория
                     onBackClick = { navController.popBackStack() }, // Кнопка "назад"
                     onShareClick = {},
                     onInstallClick = {},
@@ -62,7 +68,6 @@ fun AppNavigation() {
                     // Возврат в список
                     onShowcaseAppClick = {
                         navController.navigate("app_list") {
-                            // Очищаем историю переходов
                             popUpTo("app_list") { inclusive = true }
                         }
                     }

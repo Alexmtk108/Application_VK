@@ -1,8 +1,9 @@
-package com.mukhtarov.application_vk.ui.viewmodel
+package com.mukhtarov.application_vk.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.mukhtarov.application_vk.model.AppItem
-import com.mukhtarov.application_vk.model.MockAppsData
+import com.mukhtarov.application_vk.data.repository.AppRepositoryImpl
+import com.mukhtarov.application_vk.domain.model.AppItem
+import com.mukhtarov.application_vk.domain.repository.AppRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +20,7 @@ class AppListUiEvent {
     val apps: List<AppItem> = emptyList()
 }
 
-class AppListViewModel : ViewModel() {
+class AppListViewModel(private val repository: AppRepository = AppRepositoryImpl()) : ViewModel() {
     // StateFlow хранит состояние и переживает поворот экрана
     private val _uiState = MutableStateFlow(AppListUiState())
     val uiState: StateFlow<AppListUiState> = _uiState.asStateFlow()
@@ -34,7 +35,7 @@ class AppListViewModel : ViewModel() {
     }
 
     private fun loadApps() {
-        _uiState.value = AppListUiState(apps = MockAppsData.appsList)
+        _uiState.value = AppListUiState(apps = repository.getApps())
     }
 
     fun onToolbarClicked() {

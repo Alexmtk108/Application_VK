@@ -1,5 +1,6 @@
-package com.mukhtarov.application_vk.ui
+package com.mukhtarov.application_vk.presentation.ui
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -15,26 +16,33 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.mukhtarov.application_vk.model.AppDetails
-import com.mukhtarov.application_vk.model.AppDetailsState
-import com.mukhtarov.application_vk.model.Category
-import com.mukhtarov.application_vk.model.SimilarApp
-import com.mukhtarov.application_vk.ui.theme.Application_VKTheme
+import com.mukhtarov.application_vk.domain.model.AppDetails
+import com.mukhtarov.application_vk.domain.model.AppDetailsState
+import com.mukhtarov.application_vk.domain.model.AppItem
+import com.mukhtarov.application_vk.domain.model.Category
+import com.mukhtarov.application_vk.domain.model.SimilarApp
+import com.mukhtarov.application_vk.presentation.ui.theme.Application_VKTheme
 
 @Composable
 fun AppDetailsContent(
     content: AppDetailsState.Content,
+    showcaseApps: List<AppItem>,
     onBackClick: () -> Unit,
     onShareClick: () -> Unit,
     onInstallClick: () -> Unit,
@@ -101,6 +109,7 @@ fun AppDetailsContent(
         )
         Spacer(Modifier.height(24.dp))
         ShowcaseBlock(
+            apps = showcaseApps,
             onShowcaseAppClick = onShowcaseAppClick,
             modifier = Modifier.padding(bottom = 24.dp)
         )
@@ -138,6 +147,7 @@ private fun Preview() {
                 },
                 descriptionCollapsed = false,
             ),
+            showcaseApps = emptyList(),
             onReadMoreClick = {},
             onBackClick = {},
             onShareClick = {},
@@ -155,7 +165,7 @@ fun ScreenshotsList(screenshotUrlList: List<String>, contentPadding: PaddingValu
     // Горизонтальный список для скриншотов
     LazyRow(
         contentPadding = contentPadding,
-        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(screenshotUrlList) { url ->
             AsyncImage(
@@ -175,7 +185,7 @@ fun ScreenshotsList(screenshotUrlList: List<String>, contentPadding: PaddingValu
 fun AppDetailsHeader(appDetails: AppDetails, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier.fillMaxWidth(),
-        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically
     ) {
         // Загружаем иконку по URL
         AsyncImage(
@@ -191,13 +201,13 @@ fun AppDetailsHeader(appDetails: AppDetails, modifier: Modifier = Modifier) {
 
         // Название и разработчик
         Column {
-            androidx.compose.material3.Text(
+            Text(
                 text = appDetails.name,
                 style = MaterialTheme.typography.titleLarge,
-                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(4.dp))
-            androidx.compose.material3.Text(
+            Text(
                 text = appDetails.developer,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -212,10 +222,10 @@ fun AppDetailsHeader(appDetails: AppDetails, modifier: Modifier = Modifier) {
 @Composable
 fun Toolbar(onBackClick: () -> Unit, onShareClick: () -> Unit) {
     TopAppBar(
-        title = { androidx.compose.material3.Text("Детали приложения") },
+        title = { Text("Детали приложения") },
         navigationIcon = {
-            androidx.compose.material3.IconButton(onClick = onBackClick) {
-                androidx.compose.material3.Text("<-") // Замените на иконку стрелки
+            IconButton(onClick = onBackClick) {
+                Text("<-") // Замените на иконку стрелки
             }
         }
     )
@@ -223,18 +233,18 @@ fun Toolbar(onBackClick: () -> Unit, onShareClick: () -> Unit) {
 
 @Composable
 fun InstallButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
-    androidx.compose.material3.Button(onClick = onClick, modifier = modifier) {
-        androidx.compose.material3.Text("Установить")
+    Button(onClick = onClick, modifier = modifier) {
+        Text("Установить")
     }
 }
 
 @Composable
 fun SimilarApps(
-    apps: List<com.mukhtarov.application_vk.model.SimilarApp>,
-    onDownloadClick: (com.mukhtarov.application_vk.model.SimilarApp) -> Unit,
+    apps: List<SimilarApp>,
+    onDownloadClick: (SimilarApp) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    androidx.compose.material3.Text("Похожие приложения (заглушка)", modifier = modifier)
+    Text("Похожие приложения (заглушка)", modifier = modifier)
 }
 
 @Composable
@@ -244,10 +254,10 @@ fun AppDescription(
     onReadMoreClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    androidx.compose.material3.Text(description, modifier = modifier)
+    Text(description, modifier = modifier)
 }
 
 @Composable
 fun Developer(name: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    androidx.compose.material3.Text("Разработчик: $name", modifier = modifier)
+    Text("Разработчик: $name", modifier = modifier)
 }

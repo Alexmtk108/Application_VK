@@ -1,4 +1,4 @@
-package com.mukhtarov.application_vk.ui
+package com.mukhtarov.application_vk.presentation.ui
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
@@ -44,9 +44,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mukhtarov.application_vk.R
-import com.mukhtarov.application_vk.model.AppItem
-import com.mukhtarov.application_vk.model.MockAppsData
-import com.mukhtarov.application_vk.ui.viewmodel.AppListViewModel
+import com.mukhtarov.application_vk.data.source.MockAppsDataSource
+import com.mukhtarov.application_vk.domain.model.AppItem
+import com.mukhtarov.application_vk.presentation.viewmodel.AppListViewModel
+import com.mukhtarov.application_vk.data.mapper.toDomain
 
 /**
  * Основной экран со списком приложений.
@@ -288,10 +289,12 @@ fun AppListItem(
 private fun AppListScreenPreview() {
     MaterialTheme {
         AppListScreen(
-            apps = MockAppsData.appsList, // Передаем фейковые данные для отрисовки
-            snackbarHostState = remember { SnackbarHostState() }, // Пустой стейт
+            // Конвертируем список DTO в список AppItem через функцию map
+            apps = MockAppsDataSource.appsList.map { it.toDomain() },
+            snackbarHostState = remember { SnackbarHostState() },
             onAppClick = {},
-            onToolbarClick = {})
+            onToolbarClick = {}
+        )
     }
 }
 
@@ -300,7 +303,8 @@ private fun AppListScreenPreview() {
 private fun AppListItemPreview() {
     MaterialTheme {
         AppListItem(
-            app = MockAppsData.appsList.first(),
+            // Берем первый DTO и конвертируем его в AppItem
+            app = MockAppsDataSource.appsList.first().toDomain(),
             onAppClick = {}
         )
     }

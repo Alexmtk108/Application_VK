@@ -1,7 +1,6 @@
-package com.mukhtarov.application_vk.ui
+package com.mukhtarov.application_vk.presentation.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,17 +13,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.mukhtarov.application_vk.model.MockAppsData
+import com.mukhtarov.application_vk.data.source.MockAppsDataSource
+import com.mukhtarov.application_vk.domain.model.AppItem
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ShowcaseBlock(
+    apps: List<AppItem>,
     onShowcaseAppClick: (Int) -> Unit, // Обработчик клика
     modifier: Modifier = Modifier
 ) {
     // Берем ровно 9 приложений из писка и разбиваем на группы по 3
-    val showcasePages = remember {
-        MockAppsData.appsList.take(9).chunked(3)
+    val showcasePages = remember(apps) {
+        apps.take(9).chunked(3)
     }
 
     // Состояние пейджера с фиксированным количеством страниц

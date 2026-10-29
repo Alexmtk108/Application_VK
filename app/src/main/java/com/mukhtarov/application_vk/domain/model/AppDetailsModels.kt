@@ -1,4 +1,4 @@
-package com.mukhtarov.application_vk.model
+package com.mukhtarov.application_vk.domain.model
 
 // 1. Категория для карточки
 enum class Category { GAME, APP, OTHER }
