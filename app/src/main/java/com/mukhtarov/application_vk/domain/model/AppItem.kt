@@ -20,7 +20,7 @@ enum class AppCategory(val title: String) {
  * Модель данных элемента списка приложений.
  */
 data class AppItem(
-    val id: Int,
+    val id: String,
     val name: String,
     val description: String,
     val category: AppCategory,

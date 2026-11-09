@@ -24,10 +24,12 @@ data class AppDetails(
 )
 
 // 4. Состояние экрана
-object AppDetailsState {
+sealed class AppDetailsState {
+    data object Loading : AppDetailsState()
+    data class Error(val message: String) : AppDetailsState()
     data class Content(
         val appDetails: AppDetails,
         val similarApps: List<SimilarApp>,
         val descriptionCollapsed: Boolean
-    )
+    ) : AppDetailsState()
 }

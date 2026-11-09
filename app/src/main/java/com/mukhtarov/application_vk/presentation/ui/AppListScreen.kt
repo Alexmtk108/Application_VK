@@ -60,7 +60,7 @@ import com.mukhtarov.application_vk.data.mapper.toDomain
  */
 @Composable
 fun AppListRoute(
-    onAppClick: (Int) -> Unit,
+    onAppClick: (String) -> Unit,
     viewModel: AppListViewModel = hiltViewModel()
 ) {
     // Подписываемся на состояние списка
@@ -93,7 +93,7 @@ fun AppListRoute(
 fun AppListScreen(
     apps: List<AppItem>,
     snackbarHostState: SnackbarHostState,
-    onAppClick: (Int) -> Unit,
+    onAppClick: (String) -> Unit,
     onToolbarClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -174,7 +174,7 @@ fun AppListToolbar(
 @Composable
 fun AppList(
     apps: List<AppItem>,
-    onAppClick: (Int) -> Unit = {},
+    onAppClick: (String) -> Unit = {},
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 8.dp)
 ) {
@@ -207,7 +207,7 @@ fun AppList(
 @Composable
 fun AppListItem(
     app: AppItem,
-    onAppClick: (Int) -> Unit,
+    onAppClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(

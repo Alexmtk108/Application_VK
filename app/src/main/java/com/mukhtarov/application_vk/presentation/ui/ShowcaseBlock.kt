@@ -20,7 +20,7 @@ import com.mukhtarov.application_vk.domain.model.AppItem
 @Composable
 fun ShowcaseBlock(
     apps: List<AppItem>,
-    onShowcaseAppClick: (Int) -> Unit, // Обработчик клика
+    onShowcaseAppClick: (String) -> Unit, // Обработчик клика
     modifier: Modifier = Modifier
 ) {
     // Берем ровно 9 приложений из писка и разбиваем на группы по 3
