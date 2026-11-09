@@ -4,8 +4,9 @@ import com.mukhtarov.application_vk.data.mapper.toDomain
 import com.mukhtarov.application_vk.data.source.MockAppsDataSource
 import com.mukhtarov.application_vk.domain.model.AppItem
 import com.mukhtarov.application_vk.domain.repository.AppRepository
+import javax.inject.Inject
 
-class AppRepositoryImpl : AppRepository {
+class AppRepositoryImpl @Inject constructor() : AppRepository {
 
     override fun getApps(): List<AppItem> {
         // 1. Получаем список DTO из источника данных (Mock)
