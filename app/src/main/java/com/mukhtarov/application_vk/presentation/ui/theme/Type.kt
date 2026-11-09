@@ -1,4 +1,4 @@
-package com.mukhtarov.application_vk.ui.theme
+package com.mukhtarov.application_vk.presentation.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
