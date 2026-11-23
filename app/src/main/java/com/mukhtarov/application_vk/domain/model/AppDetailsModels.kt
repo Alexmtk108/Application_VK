@@ -24,12 +24,19 @@ data class AppDetails(
 )
 
 // 4. Состояние экрана
+sealed interface InstallState {
+    data object NotInstalled : InstallState
+    data class Installing(val progress: Int) : InstallState // 0..100
+    data object Installed : InstallState
+}
+
 sealed class AppDetailsState {
     data object Loading : AppDetailsState()
     data class Error(val message: String) : AppDetailsState()
     data class Content(
         val appDetails: AppDetails,
         val similarApps: List<SimilarApp>,
-        val descriptionCollapsed: Boolean
+        val descriptionCollapsed: Boolean,
+        val installState: InstallState = InstallState.NotInstalled
     ) : AppDetailsState()
 }

@@ -24,5 +24,6 @@ data class AppItem(
     val name: String,
     val description: String,
     val category: AppCategory,
-    @DrawableRes val iconRes: Int
+    @DrawableRes val iconRes: Int,
+    val rating: Float? = null
 )

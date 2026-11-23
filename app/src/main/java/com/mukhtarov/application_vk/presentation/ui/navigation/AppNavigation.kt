@@ -69,7 +69,7 @@ fun AppNavigation() {
                         showcaseApps = showcaseApps,
                         onBackClick = { navController.popBackStack() },
                         onShareClick = {},
-                        onInstallClick = {},
+                        onInstallClick = { viewModel.onInstallClick() },
                         onReadMoreClick = {},
                         onDeveloperClick = {},
                         onSimilarAppDownloadClick = {},

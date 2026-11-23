@@ -19,10 +19,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -39,6 +41,7 @@ import com.mukhtarov.application_vk.domain.model.AppDetails
 import com.mukhtarov.application_vk.domain.model.AppDetailsState
 import com.mukhtarov.application_vk.domain.model.AppItem
 import com.mukhtarov.application_vk.domain.model.Category
+import com.mukhtarov.application_vk.domain.model.InstallState
 import com.mukhtarov.application_vk.domain.model.SimilarApp
 import com.mukhtarov.application_vk.presentation.ui.theme.Application_VKTheme
 
@@ -70,6 +73,7 @@ fun AppDetailsContent(
         )
         Spacer(Modifier.height(16.dp))
         InstallButton(
+            installState = content.installState,
             onClick = onInstallClick,
             modifier = Modifier
                 .fillMaxWidth()
@@ -238,9 +242,41 @@ fun Toolbar(onBackClick: () -> Unit, onShareClick: () -> Unit) {
 }
 
 @Composable
-fun InstallButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Button(onClick = onClick, modifier = modifier) {
-        Text("Установить")
+fun InstallButton(
+    installState: InstallState,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        val buttonText = when (installState) {
+            is InstallState.NotInstalled -> "Установить"
+            is InstallState.Installing -> "Отменить (${installState.progress}%)"
+            is InstallState.Installed -> "Установлено"
+        }
+
+        val buttonColors = when (installState) {
+            is InstallState.Installing -> ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.error
+            )
+            else -> ButtonDefaults.buttonColors()
+        }
+
+        Button(
+            onClick = onClick,
+            enabled = installState !is InstallState.Installed,
+            colors = buttonColors,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = buttonText)
+        }
+
+        if (installState is InstallState.Installing) {
+            Spacer(modifier = Modifier.height(8.dp))
+            LinearProgressIndicator(
+                progress = { installState.progress / 100f },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }
 
