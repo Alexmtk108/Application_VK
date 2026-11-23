@@ -72,4 +72,8 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose.v120)
     ksp(libs.androidx.hilt.compiler)
     implementation(libs.androidx.compose.material.icons.extended)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
 }

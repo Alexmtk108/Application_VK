@@ -5,21 +5,31 @@ import com.mukhtarov.application_vk.data.dto.AppDto
 import com.mukhtarov.application_vk.domain.model.AppCategory
 import com.mukhtarov.application_vk.domain.model.AppItem
 
-// Extension-функция для конвертации
 fun AppDto.toDomain(): AppItem {
     return AppItem(
         id = this.id,
-        name = this.title ?: "Без названия",
-        description = this.desc ?: "Нет описания",
-        category = mapCategory(this.categoryString ?: ""),
+        name = this.title.orEmpty(),
+        description = this.desc.orEmpty(),
+        category = mapCategory(this.categoryString),
         iconRes = R.drawable.ic_launcher_foreground
     )
 }
 
-private fun mapCategory(categoryString: String): AppCategory {
+fun AppItem.toDto(): AppDto {
+    return AppDto(
+        id = this.id,
+        title = this.name,
+        desc = this.description,
+        categoryString = this.category.name,
+        iconUrl = ""
+    )
+}
+
+private fun mapCategory(categoryString: String?): AppCategory {
+    if (categoryString.isNullOrBlank()) return AppCategory.TOOLS
     return try {
-        AppCategory.valueOf(categoryString)
-    } catch (e: Exception) {
-        AppCategory.TOOLS // Значение по умолчанию, если пришла неизвестная категория
+        AppCategory.valueOf(categoryString.trim().uppercase())
+    } catch (e: IllegalArgumentException) {
+        AppCategory.TOOLS
     }
 }
